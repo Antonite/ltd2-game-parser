@@ -66,8 +66,7 @@ func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
 				continue
 			}
 
-			badUnitFound := false
-			for i := 0; i < len(p.LeaksPerWave) && i < 10 && !badUnitFound; i++ {
+			for i := 0; i < len(p.LeaksPerWave) && i < 10; i++ {
 				data := []string{}
 
 				// append wave #
@@ -85,6 +84,7 @@ func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
 				data = append(data, strings.Join(p.MercenariesReceivedPerWave[i], ","))
 
 				// units built
+				badUnitFound := false
 				m := make(map[string]string)
 				for _, u := range p.BuildPerWave[i] {
 					s := strings.Split(u, ":")
@@ -93,6 +93,10 @@ func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
 						badUnitFound = true
 					}
 					m[s[1]] = s[0]
+				}
+
+				if badUnitFound {
+					break
 				}
 
 				for _, k := range keys {
