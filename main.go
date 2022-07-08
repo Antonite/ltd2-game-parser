@@ -36,6 +36,13 @@ func main() {
 	}
 	sort.Strings(keys)
 
+	// add headers
+	data := []string{"wave", "leak", "sends"}
+	data = append(data, keys...)
+	w := csv.NewWriter(csvFile)
+	w.Write(data)
+	w.Flush()
+
 	off := 0
 	for off <= 5000 {
 		fmt.Printf("offset: %v\n", off)
@@ -69,15 +76,15 @@ func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
 			for i := 0; i < len(p.LeaksPerWave) && i < 10; i++ {
 				data := []string{}
 
-				// append wave #
-				data = append(data, strconv.Itoa(i+1))
-
 				// did we leak
 				if len(p.LeaksPerWave[i]) == 0 {
 					data = append(data, "0")
 				} else {
 					data = append(data, "1")
 				}
+
+				// append wave #
+				data = append(data, strconv.Itoa(i+1))
 
 				// sends received
 				sort.Strings(p.MercenariesReceivedPerWave[i])
