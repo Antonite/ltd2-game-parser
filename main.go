@@ -21,13 +21,13 @@ func main() {
 	// 	panic(err)
 	// }
 
-	// if err := generateData(api); err != nil {
-	// 	panic(err)
-	// }
-
-	if err := generateWaves(api); err != nil {
+	if err := generateData(api); err != nil {
 		panic(err)
 	}
+
+	// if err := generateWaves(api); err != nil {
+	// 	panic(err)
+	// }
 
 }
 
@@ -207,6 +207,7 @@ func generateWaves(api *ltdapi.LtdApi) error {
 	w := csv.NewWriter(csvFile)
 	defer w.Flush()
 
+	w.Write([]string{"wave"})
 	for i := 0; i < 11; i++ {
 		w.Write([]string{strconv.Itoa(i)})
 	}
