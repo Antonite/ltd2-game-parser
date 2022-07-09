@@ -37,7 +37,7 @@ func main() {
 	sort.Strings(keys)
 
 	// add headers
-	data := []string{"wave", "leak", "sends"}
+	data := []string{"leak", "wave", "sends"}
 	data = append(data, keys...)
 	w := csv.NewWriter(csvFile)
 	w.Write(data)
