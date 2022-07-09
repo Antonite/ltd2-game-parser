@@ -17,10 +17,20 @@ var trash = []string{"golem_unit_id", "mudman_unit_id", "infiltrator_unit_id", "
 
 func main() {
 	api := ltdapi.New()
+	if err := generateUnits(api); err != nil {
+		panic(err)
+	}
 
+	// if err := generateData(api); err != nil {
+	// 	panic(err)
+	// }
+
+}
+
+func generateData(api *ltdapi.LtdApi) error {
 	csvFile, err := os.Create("data.csv")
 	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
+		return err
 	}
 	defer csvFile.Close()
 
@@ -48,7 +58,7 @@ func main() {
 		fmt.Printf("offset: %v\n", off)
 		resp, err := api.Request(off)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		games := []ltdapi.Game{}
@@ -62,6 +72,8 @@ func main() {
 
 		off += 50
 	}
+
+	return nil
 }
 
 func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
@@ -123,6 +135,51 @@ func processResp(games []ltdapi.Game, keys []string, csvFile *os.File) {
 		}
 	}
 
+}
+
+func generateUnits(api *ltdapi.LtdApi) error {
+	csvFile, err := os.Create("units.csv")
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	defer csvFile.Close()
+
+	w := csv.NewWriter(csvFile)
+	w.Write([]string{""})
+	w.Flush()
+
+	off := 0
+	for {
+		fmt.Printf("offset: %v\n", off)
+		resp, err := api.RequestUnits(off)
+		if err != nil || resp.StatusCode != 200 {
+			return err
+		}
+
+		units := []ltdapi.Unit{}
+		defer resp.Body.Close()
+		decoder := json.NewDecoder(resp.Body)
+		if err = decoder.Decode(&units); err != nil {
+			return err
+		}
+
+		processUnits(units, csvFile)
+
+		off += 50
+	}
+}
+
+func processUnits(units []ltdapi.Unit, csvFile *os.File) {
+	w := csv.NewWriter(csvFile)
+	defer w.Flush()
+
+	for _, u := range units {
+		if u.UnitClass != "Fighter" || isTrashUnit(u.UnitId) {
+			continue
+		}
+
+		w.Write([]string{u.UnitId})
+	}
 }
 
 func isTrashUnit(unit string) bool {
