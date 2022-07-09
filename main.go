@@ -17,17 +17,17 @@ var trash = []string{"golem_unit_id", "mudman_unit_id", "infiltrator_unit_id", "
 
 func main() {
 	api := ltdapi.New()
-	// if err := generateUnits(api); err != nil {
-	// 	panic(err)
-	// }
+	if err := generateUnits(api); err != nil {
+		panic(err)
+	}
 
 	if err := generateData(api); err != nil {
 		panic(err)
 	}
 
-	// if err := generateWaves(api); err != nil {
-	// 	panic(err)
-	// }
+	if err := generateWaves(api); err != nil {
+		panic(err)
+	}
 
 }
 
@@ -58,7 +58,7 @@ func generateData(api *ltdapi.LtdApi) error {
 	w.Flush()
 
 	off := 0
-	for off <= 5000 {
+	for off <= 100 {
 		fmt.Printf("offset: %v\n", off)
 		resp, err := api.Request(off)
 		if err != nil {
@@ -149,8 +149,8 @@ func generateUnits(api *ltdapi.LtdApi) error {
 	defer csvFile.Close()
 
 	w := csv.NewWriter(csvFile)
-	w.Write([]string{"units"})
-	w.Write([]string{""})
+	w.Write([]string{"leak", "units"})
+	w.Write([]string{"0", ""})
 	w.Flush()
 
 	off := 0
@@ -183,7 +183,7 @@ func processUnits(units []ltdapi.Unit, csvFile *os.File) {
 			continue
 		}
 
-		w.Write([]string{u.UnitId})
+		w.Write([]string{"0", u.UnitId})
 	}
 }
 
@@ -207,9 +207,9 @@ func generateWaves(api *ltdapi.LtdApi) error {
 	w := csv.NewWriter(csvFile)
 	defer w.Flush()
 
-	w.Write([]string{"wave"})
+	w.Write([]string{"leak", "wave"})
 	for i := 0; i < 11; i++ {
-		w.Write([]string{strconv.Itoa(i)})
+		w.Write([]string{"0", strconv.Itoa(i)})
 	}
 
 	return nil
