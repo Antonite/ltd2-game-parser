@@ -145,7 +145,8 @@ func generateUnits(api *ltdapi.LtdApi) error {
 	defer csvFile.Close()
 
 	w := csv.NewWriter(csvFile)
-	w.Write([]string{"units", ""})
+	w.Write([]string{"units"})
+	w.Write([]string{""})
 	w.Flush()
 
 	off := 0
