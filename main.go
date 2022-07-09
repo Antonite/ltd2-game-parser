@@ -17,13 +17,17 @@ var trash = []string{"golem_unit_id", "mudman_unit_id", "infiltrator_unit_id", "
 
 func main() {
 	api := ltdapi.New()
-	if err := generateUnits(api); err != nil {
-		panic(err)
-	}
+	// if err := generateUnits(api); err != nil {
+	// 	panic(err)
+	// }
 
 	// if err := generateData(api); err != nil {
 	// 	panic(err)
 	// }
+
+	if err := generateWaves(api); err != nil {
+		panic(err)
+	}
 
 }
 
@@ -191,4 +195,21 @@ func isTrashUnit(unit string) bool {
 	}
 
 	return false
+}
+
+func generateWaves(api *ltdapi.LtdApi) error {
+	csvFile, err := os.Create("waves.csv")
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	defer csvFile.Close()
+
+	w := csv.NewWriter(csvFile)
+	defer w.Flush()
+
+	for i := 0; i < 11; i++ {
+		w.Write([]string{strconv.Itoa(i)})
+	}
+
+	return nil
 }
