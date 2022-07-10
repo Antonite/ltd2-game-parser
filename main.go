@@ -13,19 +13,21 @@ import (
 	"github.com/antonite/ltd2-game-parser/ltdapi"
 )
 
+const gameOffset = 5000
+
 var trash = []string{"golem_unit_id", "mudman_unit_id", "infiltrator_unit_id", "orchid_unit_id", "kingpin_unit_id", "sakura_unit_id", "veteran_unit_id", "peewee_unit_id", "nekomata_unit_id"}
 
 func main() {
 	api := ltdapi.New()
-	if err := generateUnits(api); err != nil {
-		panic(err)
-	}
+	// if err := generateUnits(api); err != nil {
+	// 	panic(err)
+	// }
+
+	// if err := generateWaves(api); err != nil {
+	// 	panic(err)
+	// }
 
 	if err := generateData(api); err != nil {
-		panic(err)
-	}
-
-	if err := generateWaves(api); err != nil {
 		panic(err)
 	}
 
@@ -58,7 +60,7 @@ func generateData(api *ltdapi.LtdApi) error {
 	w.Flush()
 
 	off := 0
-	for off <= 100 {
+	for off <= gameOffset {
 		fmt.Printf("offset: %v\n", off)
 		resp, err := api.Request(off)
 		if err != nil {
