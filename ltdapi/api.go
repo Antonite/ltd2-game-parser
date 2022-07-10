@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const url = "https://apiv2.legiontd2.com/games?limit=50&sortBy=date&sortDirection=1&includeDetails=true&dateAfter=2022-07-01&offset=%v"
+const url = "https://apiv2.legiontd2.com/games?limit=50&sortBy=date&sortDirection=1&includeDetails=true&dateAfter=%v&offset=%v"
 const unitsUrl = "https://apiv2.legiontd2.com/units/byVersion/9.05.6?limit=50&enabled=true&offset=%v"
 
 type LtdApi struct {
@@ -19,6 +19,7 @@ type LTDResponse struct {
 
 type Game struct {
 	PlayersData []PlayersData
+	Date        string
 }
 
 type PlayersData struct {
@@ -40,8 +41,8 @@ func New() *LtdApi {
 	}
 }
 
-func (api *LtdApi) Request(offset int) (*http.Response, error) {
-	pUrl := fmt.Sprintf(url, offset)
+func (api *LtdApi) Request(offset int, date string) (*http.Response, error) {
+	pUrl := fmt.Sprintf(url, date, offset)
 	req, err := http.NewRequest("GET", pUrl, nil)
 	if err != nil {
 		return nil, err
